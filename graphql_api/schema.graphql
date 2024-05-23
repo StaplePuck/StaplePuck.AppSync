@@ -1,0 +1,295 @@
+input SeasonInput {
+    id: String!
+    sportId: String!
+    sport: SportInput
+    fullName: String!
+    isPlayoffs: Boolean
+    startRound: Int
+    externalId: String!
+    externalPlayerUrl: String
+    externalPlayerUrl2: String
+}
+
+input SportInput {
+    id: String!
+    name: String!
+    positionTypes: [PositionTypeInput]
+    scoringTypes: [ScoringTypeInput]
+}
+
+input PositionTypeInput {
+    id: Int!
+    name: String!
+    shortName: String!
+}
+
+input ScoringTypeInput {
+    id: Int!
+    name: String!
+    shortName: String!
+}
+
+input PlayerInput {
+    id: String!
+    seasonId: String!
+    teamId: String!
+    team: TeamInput!
+    positionTypeId: Int!
+    positionType: PositionTypeInput
+    fullName: String!
+    shortName: String!
+    firstName: String!
+    lastName: String!
+    number: Int!
+    externalId: String
+    externalId2: String
+}
+
+input PlayerHistoryInput {
+    id: String!
+    leagueId: String!
+    teamId: String!
+    team: TeamInput!
+    positionTypeId: Int!
+    positionType: PositionTypeInput
+    fullName: String!
+    shortName: String!
+    firstName: String!
+    lastName: String!
+    number: Int!
+    externalId: String
+    externalId2: String
+
+    hScores: [HScoreInput]
+}
+
+input LeagueInput {
+    id: String!
+    name: String!
+    seasonId: String!
+    season: SeasonInput!
+    announcement: String
+    description: String
+    paymentInfo: String
+    isLocked: Boolean!
+    allowMultipleTeams: Boolean!
+    isActive: Boolean!
+    scoringRules: [ScoringRuleInput]
+    playersPerTeam: Int!
+    numberPerPositions: [NumberPerPositionInput]
+}
+
+input ScoringRuleInput {
+    positionTypeId: Int!
+    positionType: PositionTypeInput
+    scoringWeight: Float
+    scoringTypeId: Int!
+    scoringType: ScoringTypeInput
+}
+
+input NumberPerPositionInput {
+    positionType: PositionTypeInput!
+    count: Int!
+}
+
+input TeamInput {
+    id: String!
+    seasonId: String!
+    fullName: String!
+    shortName: String!
+    name: String!
+    locationName: String!
+    externalId: String
+    externalId2: String
+}
+
+input SpanInput {
+    id: String!
+    name: String!
+    description: String!
+    startDate: String!
+    endDate: String!
+    leagueId: String!
+    seasonId: String!
+}
+
+input HScoreInput {
+    leagueId: String!
+    playerId: String!
+    seasonId: String!
+    spanId: String!
+    span: SpanInput!
+    score: Int!
+    rank: Int!
+    positionRank: Int!
+    scores: [HScoreItemInput]!
+}
+
+input HScoreItemInput {
+    scoringTypeId: String!
+    scoringType: ScoringTypeInput!
+    score: Int!
+    rank: Int!
+    positionRank: Int!
+}
+
+type Mutation {
+    createSeason(input: SeasonInput!): Season!
+
+    createSport(input: SportInput!): Sport!
+
+    createTeam(input: TeamInput!): Team!
+
+    createPlayer(input: PlayerInput!): Player!
+
+    createLeague(input: LeagueInput!): League!
+    createSpan(input: SpanInput!): Span!
+
+    createPlayerHistory(input: PlayerHistoryInput!): PlayerHistory!
+}
+
+type Season {
+    id: String!
+    sportId: String!
+    sport: Sport
+    fullName: String!
+    isPlayoffs: Boolean
+    startRound: Int
+    externalId: String!
+    externalPlayerUrl: String
+    externalPlayerUrl2: String
+}
+
+type Sport {
+    id: String!
+    name: String!
+    positionTypes: [PositionType]
+    scoringTypes: [ScoringType]
+}
+
+type PositionType {
+    id: Int!
+    name: String!
+    shortName: String!
+}
+
+type ScoringType{
+    id: Int!
+    name: String!
+    shortName: String!
+}
+
+type Player {
+    id: String!
+    seasonId: String!
+    teamId: String!
+    team: Team!
+    positionTypeId: Int!
+    positionType: PositionType
+    fullName: String!
+    shortName: String!
+    firstName: String!
+    lastName: String!
+    number: Int!
+    externalId: String
+    externalId2: String
+}
+
+type Team {
+    id: String!
+    seasonId: String!
+    fullName: String!
+    shortName: String!
+    name: String!
+    locationName: String!
+    externalId: String
+    externalId2: String
+}
+
+type NumberPerPosition {
+    positionType: PositionType!
+    count: Int!
+}
+
+type League {
+    id: String
+    name: String!
+    seasonId: String!
+    season: Season!
+    announcement: String
+    description: String
+    paymentInfo: String
+    isLocked: Boolean!
+    allowMultipleTeams: Boolean!
+    isActive: Boolean!
+    numberPerPositions: [NumberPerPosition]
+    playersPerTeam: Int!
+    scoringRules: [ScoringRule]
+}
+
+type ScoringRule {
+    positionTypeId: Int!
+    positionType: PositionType
+    scoringWeight: Float
+    scoringTypeId: Int!
+    scoringType: ScoringType
+}
+
+type Span {
+    id: String!
+    name: String!
+    description: String!
+    startDate: String!
+    endDate: String!
+    leagueId: String!
+    seasonId: String!
+}
+
+type PlayerHistory {
+    id: String!
+    leagueId: String!
+    teamId: String!
+    team: Team!
+    positionTypeId: Int!
+    positionType: PositionType
+    fullName: String!
+    shortName: String!
+    firstName: String!
+    lastName: String!
+    number: Int!
+    externalId: String
+    externalId2: String
+
+    hScores: [HScore]!
+}
+
+type HScore {
+    leagueId: String!
+    playerId: String!
+    spanId: String!
+    span: Span
+    score: Int!
+    rank: Int!
+    positionRank: Int!
+    scores: [HScoreItem]!
+}
+
+type HScoreItem {
+    scoringTypeId: String!
+    scoringType: ScoringType
+    score: Int!
+    rank: Int!
+    positionRank: Int!
+}
+
+
+type Query{
+    league(leagueId: ID!): League
+    season(seasonId: ID!): Season
+    spans(leagueId: ID!): [Span]
+
+    playersHistoryByLeague(leagueId: ID!): [PlayerHistory]
+
+    playersBySeason(seasonId: ID!): [Player]
+    teamsBySeason(seasonId: ID!): [Team]
+}

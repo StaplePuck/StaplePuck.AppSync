@@ -1,0 +1,231 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: AppSync API for StaplePuck
+
+Resources:
+  StatsTable:
+    Type: "AWS::DynamoDB::Table"
+    Properties:
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: PK
+          AttributeType: S
+        - AttributeName: SK
+          AttributeType: S
+        - AttributeName: GSI1PK
+          AttributeType: S
+        - AttributeName: GSI1SK
+          AttributeType: S
+        - AttributeName: GSI2PK
+          AttributeType: S
+        - AttributeName: GSI2SK
+          AttributeType: S
+      KeySchema:
+        - AttributeName: PK
+          KeyType: HASH
+        - AttributeName: SK
+          KeyType: RANGE
+      GlobalSecondaryIndexes:
+        - IndexName: GSI1
+          KeySchema:
+            - AttributeName: GSI1PK
+              KeyType: HASH
+            - AttributeName: GSI1SK
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+        - IndexName: GSI2
+          KeySchema:
+            - AttributeName: GSI2PK
+              KeyType: HASH
+            - AttributeName: GSI2SK
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+
+  GraphQLAPI:
+    Type: AWS::Serverless::GraphQLApi
+    Properties:
+      SchemaUri: ./graphql_api/schema.graphql
+      ApiKeys:
+        TestApiKey:
+          Description: Test Api Key
+      Auth:
+        Type: API_KEY
+      DataSources:
+        DynamoDb:
+          ItemsDataSource:
+            TableName: !Ref StatsTable
+            TableArn: !GetAtt StatsTable.Arn
+      Functions:
+        CreateLeagueFunction:
+          Runtime: 
+            Name: APPSYNC_JS
+            Version: 1.0.0
+          DataSource: ItemsDataSource
+          CodeUri: ./graphql_api/resolvers/functions/CreateLeagueFunction.js
+      
+        CreatePlayerFunction:
+          Runtime: 
+            Name: APPSYNC_JS
+            Version: 1.0.0
+          DataSource: ItemsDataSource
+          CodeUri: ./graphql_api/resolvers/functions/CreatePlayerFunction.js
+
+        CreatePlayerHistoryFunction:
+          Runtime: 
+            Name: APPSYNC_JS
+            Version: 1.0.0
+          DataSource: ItemsDataSource
+          CodeUri: ./graphql_api/resolvers/functions/CreatePlayerHistoryFunction.js
+
+        CreateSeasonFunction:
+          Runtime: 
+            Name: APPSYNC_JS
+            Version: 1.0.0
+          DataSource: ItemsDataSource
+          CodeUri: ./graphql_api/resolvers/functions/CreateSeasonFunction.js
+
+        CreateSpanFunction:
+          Runtime: 
+            Name: APPSYNC_JS
+            Version: 1.0.0
+          DataSource: ItemsDataSource
+          CodeUri: ./graphql_api/resolvers/functions/CreateSpanFunction.js
+
+        CreateSportFunction:
+          Runtime: 
+            Name: APPSYNC_JS
+            Version: 1.0.0
+          DataSource: ItemsDataSource
+          CodeUri: ./graphql_api/resolvers/functions/CreateSportFunction.js
+
+        CreateTeamFunction:
+          Runtime: 
+            Name: APPSYNC_JS
+            Version: 1.0.0
+          DataSource: ItemsDataSource
+          CodeUri: ./graphql_api/resolvers/functions/CreateTeamFunction.js
+
+        LeagueFunction:
+          Runtime: 
+            Name: APPSYNC_JS
+            Version: 1.0.0
+          DataSource: ItemsDataSource
+          CodeUri: ./graphql_api/resolvers/functions/LeagueFunction.js
+
+        PlayersHistoryByLeagueFunction:
+          Runtime: 
+            Name: APPSYNC_JS
+            Version: 1.0.0
+          DataSource: ItemsDataSource
+          CodeUri: ./graphql_api/resolvers/functions/PlayersHistoryByLeagueFunction.js
+
+        PlayersBySeasonFunction:
+          Runtime: 
+            Name: APPSYNC_JS
+            Version: 1.0.0
+          DataSource: ItemsDataSource
+          CodeUri: ./graphql_api/resolvers/functions/PlayersBySeasonFunction.js
+        
+        SeasonFunction:
+          Runtime: 
+            Name: APPSYNC_JS
+            Version: 1.0.0
+          DataSource: ItemsDataSource
+          CodeUri: ./graphql_api/resolvers/functions/SeasonFunction.js
+
+        SpansFunction:
+          Runtime: 
+            Name: APPSYNC_JS
+            Version: 1.0.0
+          DataSource: ItemsDataSource
+          CodeUri: ./graphql_api/resolvers/functions/SpansFunction.js
+        
+        TeamsBySeasonFunction:
+          Runtime: 
+            Name: APPSYNC_JS
+            Version: 1.0.0
+          DataSource: ItemsDataSource
+          CodeUri: ./graphql_api/resolvers/functions/TeamsBySeasonFunction.js
+      Resolvers:
+        Query:
+          league:
+            Runtime:
+              Name: APPSYNC_JS
+              Version: "1.0.0"
+            Pipeline:
+            - LeagueFunction
+          playersHistoryByLeague:
+            Runtime:
+              Name: APPSYNC_JS
+              Version: "1.0.0"
+            Pipeline:
+            - PlayersHistoryByLeagueFunction
+          playersBySeason:
+            Runtime:
+              Name: APPSYNC_JS
+              Version: "1.0.0"
+            Pipeline:
+            - PlayersBySeasonFunction
+          season:
+            Runtime:
+              Name: APPSYNC_JS
+              Version: "1.0.0"
+            Pipeline:
+            - SeasonFunction
+          spans:
+            Runtime:
+              Name: APPSYNC_JS
+              Version: "1.0.0"
+            Pipeline:
+            - SpansFunction
+          teamsBySeason:
+            Runtime:
+              Name: APPSYNC_JS
+              Version: "1.0.0"
+            Pipeline:
+            - TeamsBySeasonFunction
+        Mutation:
+          createLeague:
+            Runtime:
+              Name: APPSYNC_JS
+              Version: "1.0.0"
+            Pipeline:
+            - CreateLeagueFunction
+          createPlayer:
+            Runtime:
+              Name: APPSYNC_JS
+              Version: "1.0.0"
+            Pipeline:
+            - CreatePlayerFunction
+          createPlayerHistory:
+            Runtime:
+              Name: APPSYNC_JS
+              Version: "1.0.0"
+            Pipeline:
+            - CreatePlayerHistoryFunction
+          createSeason:
+            Runtime:
+              Name: APPSYNC_JS
+              Version: "1.0.0"
+            Pipeline:
+            - CreateSeasonFunction
+          createSpan:
+            Runtime:
+              Name: APPSYNC_JS
+              Version: "1.0.0"
+            Pipeline:
+            - CreateSpanFunction
+          createSport:
+            Runtime:
+              Name: APPSYNC_JS
+              Version: "1.0.0"
+            Pipeline:
+            - CreateSportFunction
+          createTeam:
+            Runtime:
+              Name: APPSYNC_JS
+              Version: "1.0.0"
+            Pipeline:
+            - CreateTeamFunction
